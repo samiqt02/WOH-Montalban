@@ -6,8 +6,8 @@
   <title>WOH Montalban | A CHRISTIAN FAMILY CHURCH</title>
   <link rel="icon" href="assets/WOHLOGO.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
     /* Reset */
     * {
@@ -20,8 +20,8 @@
       height: 100%;
       overflow-x: hidden;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #0a1a2f; /* deep navy background */
-      color: #f8f9fa; /* light text */
+      background: #0a1a2f;
+      color: #f8f9fa;
     }
 
     body {
@@ -38,7 +38,7 @@
       width: 100%;
       max-width: 1375px;
       height: 70px;
-      background: rgba(10, 20, 40, 0.95); /* navy glass */
+      background: rgba(10, 20, 40, 0.95);
       backdrop-filter: blur(10px);
       color: #fff;
       display: flex;
@@ -46,10 +46,9 @@
       justify-content: space-between;
       padding: 0 2rem;
       border-radius: 15px;
-      z-index: 1000;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
       border: 1px solid #d4af37;
-      z-index: 9999;
+      z-index: 3000; /* above canvas */
     }
 
     .logo img {
@@ -63,6 +62,7 @@
       gap: 2rem;
       list-style: none;
       transition: transform 0.4s ease;
+      z-index: 3100; /* dropdown above navbar */
     }
 
     .nav-links li a {
@@ -73,7 +73,7 @@
     }
 
     .nav-links li a:hover {
-      color: #d4af37; /* gold hover */
+      color: #d4af37;
       border-bottom: 2px solid #d4af37;
     }
 
@@ -95,11 +95,12 @@
       transition: all 0.4s ease;
     }
 
+    /* Mobile */
     @media (max-width: 768px) {
       nav {
-            width: 91%;
-            padding: 0 1rem;
-        }
+        width: 91%;
+        padding: 0 1rem;
+      }
       .nav-links {
         position: absolute;
         top: 70px;
@@ -123,16 +124,11 @@
         border-radius: 5px;
       }
       .burger { display: flex; }
-
     }
 
-    .burger.toggle span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
+    .burger.toggle span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
     .burger.toggle span:nth-child(2) { opacity: 0; }
-    .burger.toggle span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
-    }
+    .burger.toggle span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
 
     /* Content */
     .content {
@@ -143,10 +139,9 @@
       flex-wrap: wrap;
       width: 100%;
       max-width: 1400px;
-      height: 100%;
       margin: 0 auto;
       padding: 1rem;
-      z-index: 9999;
+      z-index: 2000; /* above canvas */
     }
 
     .swiper {
@@ -166,7 +161,7 @@
       object-fit: fill;
     }
 
-    /* Verse Section */
+    /* Verse Box */
     .verse-box {
       flex: 1;
       min-width: 280px;
@@ -201,22 +196,18 @@
       font-family: 'Merriweather', serif;
       font-size: clamp(16px, 2vw, 20px);
       font-weight: bold;
-      color: #d4af37; /* gold reference */
+      color: #d4af37;
     }
 
     @media (max-width: 768px) {
       .content { 
-        flex-direction: column-reverse; 
+        flex-direction: column-reverse;
         margin-top: 10px;
         margin-bottom: 100px;
         gap: 1rem;
-    }
-      .swiper, .verse-box {
-         width: 100%;
-    }
-      .swiper {
-        aspect-ratio: 16 / 12;
       }
+      .swiper, .verse-box { width: 100%; }
+      .swiper { aspect-ratio: 16 / 12; }
     }
 
     /* Videos */
@@ -228,7 +219,7 @@
       padding: 0 1rem;
       max-width: 1400px;
       width: 100%;
-      z-index: 9999;
+      z-index: 2000; /* above canvas */
     }
 
     .video-card {
@@ -251,22 +242,25 @@
     }
 
     .video-card p { padding: 10px; font-weight: 500; }
-    
+
     /* Full screen canvas */
-#starCanvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1;
-  pointer-events: none;  
-  background: transparent; /* keep it transparent if you want content visible */
-}
+    #starCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1; /* behind everything */
+      pointer-events: none;
+      background: transparent;
+    }
+
   </style>
 </head>
 <body>
   <canvas id="starCanvas"></canvas>
+
+  <!-- Navbar -->
   <nav>
     <div class="logo">
       <img src="assets/WOH.png" alt="Logo">
@@ -282,6 +276,7 @@
     </div>
   </nav>
 
+  <!-- Content -->
   <div class="content">
     <div class="swiper mySwiper">
       <div class="swiper-wrapper">
@@ -294,49 +289,52 @@
       <div class="swiper-button-next"></div>
       <div class="swiper-button-prev"></div>
     </div>
+
     <div class="verse-box">
       <div class="verse" id="verse">Loading verse...</div>
       <div class="reference" id="reference"></div>
     </div>
   </div>
 
+  <!-- Videos -->
   <div class="video-section">
     <div class="video-card">
-        <video controls poster="assets/WOH2.png">
-          <source src="assets/GrandOpening.mp4" type="video/mp4">
-          <source src="assets/myvideo.webm" type="video/webm">
-          Your browser does not support the video tag.
-        </video>
-        <p>WOH - Montalban Grand Opening</p>
+      <video controls poster="assets/WOH2.png">
+        <source src="assets/GrandOpening.mp4" type="video/mp4">
+        <source src="assets/myvideo.webm" type="video/webm">
+        Your browser does not support the video tag.
+      </video>
+      <p>WOH - Montalban Grand Opening</p>
     </div>
     <div class="video-card">
-        <video controls poster="assets/WOH2.png">
-          <source src="assets/WOHMontalban.mp4" type="video/mp4">
-          <source src="assets/myvideo.webm" type="video/webm">
-          Your browser does not support the video tag.
-        </video>
-        <p>WOH - Montalban</p>
+      <video controls poster="assets/WOH2.png">
+        <source src="assets/WOHMontalban.mp4" type="video/mp4">
+        <source src="assets/myvideo.webm" type="video/webm">
+        Your browser does not support the video tag.
+      </video>
+      <p>WOH - Montalban</p>
     </div>
     <div class="video-card">
-        <video controls poster="assets/WOH2.png">
-          <source src="assets/1STANNIV.mp4" type="video/mp4">
-          <source src="assets/myvideo.webm" type="video/webm">
-          Your browser does not support the video tag.
-        </video>
-        <p>WOH - Montalban 1st Anniversary</p>
+      <video controls poster="assets/WOH2.png">
+        <source src="assets/1STANNIV.mp4" type="video/mp4">
+        <source src="assets/myvideo.webm" type="video/webm">
+        Your browser does not support the video tag.
+      </video>
+      <p>WOH - Montalban 1st Anniversary</p>
     </div>
     <div class="video-card">
-        <video controls poster="assets/WOH2.png">
-          <source src="assets/YA.mp4" type="video/mp4">
-          <source src="assets/myvideo.webm" type="video/webm">
-          Your browser does not support the video tag.
-        </video>
-        <p>WOH - Montalban Youth Alive</p>
+      <video controls poster="assets/WOH2.png">
+        <source src="assets/YA.mp4" type="video/mp4">
+        <source src="assets/myvideo.webm" type="video/webm">
+        Your browser does not support the video tag.
+      </video>
+      <p>WOH - Montalban Youth Alive</p>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
   <script>
+    // Burger toggle
     const burger = document.getElementById('burger');
     const navLinks = document.querySelector('.nav-links');
     burger.addEventListener('click', () => {
@@ -344,6 +342,7 @@
       burger.classList.toggle('toggle');
     });
 
+    // Swiper slider
     const swiper = new Swiper(".mySwiper", {
       loop: true,
       autoplay: {
@@ -357,6 +356,7 @@
       speed: 800
     });
 
+    // Load verse
     async function loadVerse() {
       try {
         const response = await fetch("https://beta.ourmanna.com/api/v1/get/?format=json");
@@ -369,44 +369,45 @@
     }
     loadVerse();
 
-const canvas = document.getElementById("starCanvas");
-const ctx = canvas.getContext("2d");
+    // Star canvas animation
+    const canvas = document.getElementById("starCanvas");
+    const ctx = canvas.getContext("2d");
 
-let stars = [];
-const numStars = 200;
+    let stars = [];
+    const numStars = 200;
 
-function initStars() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  stars = [];
-  for (let i = 0; i < numStars; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.5 + 0.5,
-      alpha: Math.random(),
-      delta: (Math.random() * 0.01 + 0.005) * (Math.random() < 0.5 ? 1 : -1) // slower blink
-    });
-  }
-}
+    function initStars() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = [];
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          alpha: Math.random(),
+          delta: (Math.random() * 0.01 + 0.005) * (Math.random() < 0.5 ? 1 : -1)
+        });
+      }
+    }
 
-function animateStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stars.forEach(star => {
-    star.alpha += star.delta;
-    if (star.alpha > 1) { star.alpha = 1; star.delta = -star.delta; }
-    if (star.alpha < 0) { star.alpha = 0; star.delta = -star.delta; }
-    ctx.beginPath();
-    ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
-    ctx.fill();
-  });
-  requestAnimationFrame(animateStars);
-}
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.alpha += star.delta;
+        if (star.alpha > 1) { star.alpha = 1; star.delta = -star.delta; }
+        if (star.alpha < 0) { star.alpha = 0; star.delta = -star.delta; }
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
 
-window.addEventListener("resize", initStars);
-initStars();
-animateStars();
+    window.addEventListener("resize", initStars);
+    initStars();
+    animateStars();
   </script>
 </body>
 </html>
