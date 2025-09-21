@@ -48,7 +48,8 @@
       border-radius: 15px;
       z-index: 1000;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-      border: 1px solid #d4af37; /* gold accent */
+      border: 1px solid #d4af37;
+      z-index: 9999;
     }
 
     .logo img {
@@ -105,7 +106,7 @@
         right: 0;
         background: #0a1a2f;
         flex-direction: column;
-        width: 220px;
+        width: 160px;
         height: 0;
         overflow: hidden;
         gap: 1.5rem;
@@ -117,7 +118,7 @@
       .nav-links.open {
         height: auto;
         margin-top: 0.1rem;
-        padding: 1.5rem;
+        padding: 1rem;
         transform: scaleY(1);
         border-radius: 5px;
       }
@@ -145,6 +146,7 @@
       height: 100%;
       margin: 0 auto;
       padding: 1rem;
+      z-index: 9999;
     }
 
     .swiper {
@@ -226,6 +228,7 @@
       padding: 0 1rem;
       max-width: 1400px;
       width: 100%;
+      z-index: 9999;
     }
 
     .video-card {
@@ -248,16 +251,29 @@
     }
 
     .video-card p { padding: 10px; font-weight: 500; }
+    
+    /* Full screen canvas */
+#starCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;  
+  background: transparent; /* keep it transparent if you want content visible */
+}
   </style>
 </head>
 <body>
+  <canvas id="starCanvas"></canvas>
   <nav>
     <div class="logo">
       <img src="assets/WOH.png" alt="Logo">
     </div>
     <ul class="nav-links">
       <li><a href="#">Home</a></li>
-      <li><a href="#">About</a></li>
+      <li><a href="about.html">About</a></li>
       <li><a href="#">Services</a></li>
       <li><a href="#">Contact</a></li>
     </ul>
@@ -352,6 +368,45 @@
       }
     }
     loadVerse();
+
+const canvas = document.getElementById("starCanvas");
+const ctx = canvas.getContext("2d");
+
+let stars = [];
+const numStars = 200;
+
+function initStars() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  stars = [];
+  for (let i = 0; i < numStars; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.5,
+      alpha: Math.random(),
+      delta: (Math.random() * 0.01 + 0.005) * (Math.random() < 0.5 ? 1 : -1) // slower blink
+    });
+  }
+}
+
+function animateStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(star => {
+    star.alpha += star.delta;
+    if (star.alpha > 1) { star.alpha = 1; star.delta = -star.delta; }
+    if (star.alpha < 0) { star.alpha = 0; star.delta = -star.delta; }
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(animateStars);
+}
+
+window.addEventListener("resize", initStars);
+initStars();
+animateStars();
   </script>
 </body>
 </html>
