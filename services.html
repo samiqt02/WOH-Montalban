@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOH Montalban | Services</title>
+  <link rel="icon" href="assets/WOHLOGO.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: #0a1a2f; color: #f8f9fa; }
+    body { display: flex; flex-direction: column; align-items: center; padding-top: 70px; }
+
+    /* Navbar */
+    nav {
+      position: fixed;
+      top: 10px;
+      width: 96.5%;
+      max-width: 1375px;
+      height: 70px;
+      background: rgba(10, 20, 40, 0.95);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      border-radius: 15px;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      border: 1px solid #d4af37;
+    }
+    .logo img { height: 45px; width: auto; display: block; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; transition: transform 0.4s ease; z-index: 3001; }
+    .nav-links li a { text-decoration: none; color: #f8f9fa; font-weight: 500; padding-bottom: 3px; }
+    .nav-links li a:hover { color: #d4af37; border-bottom: 2px solid #d4af37; }
+    .burger { display: none; flex-direction: column; cursor: pointer; width: 25px; height: 20px; justify-content: space-between; }
+    .burger span { height: 3px; width: 100%; background: #f8f9fa; border-radius: 3px; transition: all 0.4s ease; }
+
+    @media (max-width: 768px) {
+      nav { width: 94%; padding: 0 1rem; }
+      .nav-links { position: absolute; top: 70px; right: 0; background: #0a1a2f; flex-direction: column; width: 160px; height: 0; overflow: hidden; gap: 1.5rem; transform: scaleY(0); transform-origin: top; box-shadow: 0 4px 10px rgba(0,0,0,0.8); border-left: 2px solid #d4af37; }
+      .nav-links.open { height: auto; margin-top: 0.1rem; padding: 1rem; transform: scaleY(1); border-radius: 5px; }
+      .burger { display: flex; }
+    }
+    .burger.toggle span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .burger.toggle span:nth-child(2) { opacity: 0; }
+    .burger.toggle span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* Section */
+    section {
+      width: 100%;
+      max-width: 1000px;
+      padding: 4rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      z-index: 2;
+    }
+    section h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 2.4rem;
+      color: #d4af37;
+      margin-bottom: 2rem;
+    }
+
+.schedule {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* always 2 cards per row */
+  gap: 1.5rem;
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .schedule {
+    grid-template-columns: 1fr; /* single column on smaller screens */
+  }
+}
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #d4af37;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      transition: transform 0.3s ease;
+    }
+    .card:hover { transform: translateY(-5px); }
+    .card h3 {
+      font-size: 1.4rem;
+      color: #f8f9fa;
+      margin-bottom: 0.8rem;
+    }
+    .card p {
+      font-size: 1.05rem;
+      color: #eaeaea;
+      line-height: 1.6;
+    }
+
+    #starCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starCanvas"></canvas>
+
+  <nav>
+    <div class="logo"><img src="assets/WOH.png" alt="Logo"></div>
+    <ul class="nav-links">
+      <li><a href="landing-page.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="mission-vision.html">Mission & Vision</a></li>
+      <li><a href="beliefs.html">Beliefs</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="pastors.html">Pastors</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="burger" id="burger"><span></span><span></span><span></span></div>
+  </nav>
+
+  <section>
+    <h2>Worship Schedules</h2>
+    <div class="schedule">
+      <div class="card">
+        <h3>Sunday Worship</h3>
+        <p>7:00 AM – First Service</p>
+        <p>9:00 AM – Second Service</p>
+        <p>3:00 PM – Afternoon Service (Soon)</p>
+      </div>
+      <div class="card">
+        <h3>Midweek Service</h3>
+        <p>Wednesday, 6:00 PM</p>
+        <p>A time of prayer, worship, and digging deeper into God’s Word.</p>
+      </div>
+      <div class="card">
+        <h3>Youth Fellowship</h3>
+        <p>Saturday, 3:00 PM</p>
+        <p>Engaging, Christ-centered programs designed for young people.</p>
+      </div>
+      <div class="card">
+        <h3>Prayer Gathering</h3>
+        <p>Friday, 6:00 PM</p>
+        <p>Corporate prayer for families, the church, and the nation.</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const burger = document.getElementById('burger');
+    const navLinks = document.querySelector('.nav-links');
+    burger.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      burger.classList.toggle('toggle');
+    });
+
+    // Star animation
+    const canvas = document.getElementById("starCanvas");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+    const numStars = 200;
+
+    function initStars() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = [];
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          alpha: Math.random(),
+          delta: (Math.random() * 0.01 + 0.005) * (Math.random() < 0.5 ? 1 : -1)
+        });
+      }
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.alpha += star.delta;
+        if (star.alpha > 1) { star.alpha = 1; star.delta = -star.delta; }
+        if (star.alpha < 0) { star.alpha = 0; star.delta = -star.delta; }
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+
+    window.addEventListener("resize", initStars);
+    initStars();
+    animateStars();
+  </script>
+</body>
+</html>

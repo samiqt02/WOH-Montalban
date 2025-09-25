@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOH Montalban | Mission & Vision</title>
+  <link rel="icon" href="assets/WOHLOGO.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: #0a1a2f; color: #f8f9fa; }
+    body { display: flex; flex-direction: column; align-items: center; padding-top: 70px; }
+
+    /* Navbar */
+    nav {
+      position: fixed;
+      top: 10px;
+      width: 96.5%;
+      max-width: 1375px;
+      height: 70px;
+      background: rgba(10, 20, 40, 0.95);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      border-radius: 15px;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      border: 1px solid #d4af37;
+    }
+
+    .logo img { height: 45px; width: auto; display: block; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; transition: transform 0.4s ease; z-index: 3001; }
+    .nav-links li a { text-decoration: none; color: #f8f9fa; font-weight: 500; padding-bottom: 3px; }
+    .nav-links li a:hover { color: #d4af37; border-bottom: 2px solid #d4af37; }
+    .burger { display: none; flex-direction: column; cursor: pointer; width: 25px; height: 20px; justify-content: space-between; }
+    .burger span { height: 3px; width: 100%; background: #f8f9fa; border-radius: 3px; transition: all 0.4s ease; }
+
+    @media (max-width: 768px) {
+      nav { width: 94%; padding: 0 1rem; }
+      .nav-links { position: absolute; top: 70px; right: 0; background: #0a1a2f; flex-direction: column; width: 160px; height: 0; overflow: hidden; gap: 1.5rem; transform: scaleY(0); transform-origin: top; box-shadow: 0 4px 10px rgba(0,0,0,0.8); border-left: 2px solid #d4af37; }
+      .nav-links.open { height: auto; margin-top: 0.1rem; padding: 1rem; transform: scaleY(1); border-radius: 5px; }
+      .burger { display: flex; }
+    }
+
+    .burger.toggle span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .burger.toggle span:nth-child(2) { opacity: 0; }
+    .burger.toggle span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+section {
+  width: 100%;
+  padding: 4rem 1rem;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+section h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 2.4rem;
+  color: #d4af37;
+  margin-bottom: 1rem;
+  text-align: center; /* keep headings centered */
+}
+
+section p, 
+section ul {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #eaeaea;
+  text-align: left;   /* align text left */
+  margin: 0 auto;     /* center block within section */
+  max-width: 900px;   /* limit width for readability */
+}
+
+    #starCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      background: transparent;
+    }
+
+    .credit {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #bbb;
+    }
+    .credit a {
+      color: #bbb;
+      text-decoration: none;
+    }
+    .credit a:hover {
+      color: #d4af37;
+    }
+
+  </style>
+</head>
+<body>
+  <canvas id="starCanvas"></canvas>
+
+  <nav>
+    <div class="logo"><img src="assets/WOH.png" alt="Logo"></div>
+    <ul class="nav-links">
+      <li><a href="landing-page.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="mission-vision.html">Mission & Vision</a></li>
+      <li><a href="beliefs.html">Beliefs</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="pastors.html">Pastors</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="burger" id="burger"><span></span><span></span><span></span></div>
+  </nav>
+
+<section>
+  <h2>Mission</h2>
+  <p>
+    “To spread the Good News of Salvation and the truths of the Bible, and bring lost souls to the Lord Jesus Christ — the Giver of Hope.”  
+  </p>
+
+  <p>
+    Our church was established to give honor and glory to God; to make disciples of the Lord Jesus Christ; to build up men and women for the ministry and the proclamation of the full gospel message in the power of the Holy Spirit.
+  </p>
+
+  <p>
+    Our goal: To make disciples of the Lord Jesus Christ.  
+    A disciple is one who lives as His master lives. We aim not only to reach people but to make disciples who will disciple others.  
+    We cannot stop at our city — we participate in the universal effort to expand His kingdom to every people group.
+  </p>
+
+  <p>
+    One message: The full gospel of His Kingdom — not only deliverance from sin, but the abundant life God desires for His people today.  
+    Our method: Declaration and demonstration in the power of the Holy Spirit.
+  </p>
+
+  <div class="credit">
+    Source: <a href="https://www.wordofhope.ph/copy-3-of-about-us" target="_blank">Word of Hope – Mission Page</a>
+  </div>
+</section>
+
+<section>
+  <h2>Vision</h2>
+  <p>
+    “To be a Christ-centered, Spirit-empowered, and Bible-based church that ministers to the whole family and reaches the world with the Gospel of Jesus Christ.”  
+  </p>
+
+  <p>
+    We envision building a church with a strong foundation in God’s Word, a passion for winning souls, and a commitment to disciple believers who will impact society with Kingdom values.  
+  </p>
+
+  <p>
+    Our vision is to see transformed lives, strong families, vibrant communities, and nations touched by the power of God through faithful discipleship and mission.
+  </p>
+
+  <h2>2025 Goals</h2>
+  <ul style="text-align:left; margin:1rem auto; line-height:1.7; font-size:1.15rem; color:#eaeaea;">
+    <li>Win <strong>175,000 souls for Christ</strong> through MV Good News Island Evangelism, Gospel Buses Crusades, Kid’s Mobile Outreaches, and Church Services. Believing the Lord to supply & abundantly bless the church supernaturally.</li>
+    <li>Plant & establish <strong>40 new satellite churches</strong> (with 5 in urban centers & 5 abroad). Train & equip satellite and marketplace pastors.</li>
+    <li>Reach <strong>10,000 prayer partners</strong> – a church earnestly praying for revival, believers being used in the Gifts of the Holy Spirit. Establish prayer groups for all department ministries.</li>
+    <li>Intentionally build <strong>1,000 new Life Groups</strong>. All ministry heads to lead Life Groups. Develop & encourage discipleship multiplication. Empower mature leaders to disciple and train new disciple leaders.</li>
+    <li>Develop a spiritually vibrant and growing <strong>Youth Ministry</strong>. Encourage young people to win other youth for Christ & provide relevant youth programs & activities.</li>
+    <li>Promote mission participation and exposure for all interested & able WOH members through short-term trips via MV Good News, Gospel Buses, trips at home or abroad for missions.</li>
+    <li>Establish an effective <strong>Life-Coaching & Counseling Ministry</strong> to help the hurting, those struggling with addictions or spiritual oppression to find God’s love, healing, forgiveness, & acceptance in the Body of Christ.</li>
+    <li>Provide <strong>leadership training</strong> to all present ministry leaders and future leaders. Promote & encourage enrollment at CGS, HLC & Hibs.</li>
+    <li>A vibrant church where all faithful members and families have strong relationships with the Lord Jesus Christ, experiencing His promise of “Abundant Life.” Encourage entrepreneurship for success and prosperity.</li>
+    <li><strong>Improvement Projects</strong>: WOH Central’s Gymnasium, Auditorium, Chapel, and Paradise Prayer Garden, plus updating of equipment to improve facilities.</li>
+  </ul>
+
+  <div class="credit">
+    Source: <a href="https://www.wordofhope.ph/copy-4-of-about-us" target="_blank">Word of Hope – Vision Page</a>
+  </div>
+</section>
+
+  <script>
+    const burger = document.getElementById('burger');
+    const navLinks = document.querySelector('.nav-links');
+    burger.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      burger.classList.toggle('toggle');
+    });
+
+    // Star animation
+    const canvas = document.getElementById("starCanvas");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+    const numStars = 200;
+    function initStars() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = [];
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          alpha: Math.random(),
+          delta: (Math.random() * 0.01 + 0.005) * (Math.random() < 0.5 ? 1 : -1)
+        });
+      }
+    }
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.alpha += star.delta;
+        if (star.alpha > 1) { star.alpha = 1; star.delta = -star.delta; }
+        if (star.alpha < 0) { star.alpha = 0; star.delta = -star.delta; }
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    window.addEventListener("resize", initStars);
+    initStars();
+    animateStars();
+  </script>
+</body>
+</html>
