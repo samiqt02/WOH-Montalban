@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Beliefs - WOH Montalban</title>
+  <title>WOH Montalban | Our Beliefs</title>
   <link rel="icon" href="assets/WOHLOGO.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -18,6 +18,7 @@
       align-items: center; 
     }
 
+    /* Navbar */
     nav {
       position: fixed;
       top: 10px;
@@ -26,6 +27,7 @@
       height: 70px;
       background: rgba(10, 20, 40, 0.95);
       backdrop-filter: blur(10px);
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -35,10 +37,24 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
       border: 1px solid #d4af37;
     }
-    .logo img { height: 45px; width: auto; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links li a { text-decoration: none; color: #f8f9fa; font-weight: 500; }
+
+    .logo img { height: 45px; width: auto; display: block; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; transition: transform 0.4s ease; z-index: 3001; }
+    .nav-links li a { text-decoration: none; color: #f8f9fa; font-weight: 500; padding-bottom: 3px; }
     .nav-links li a:hover { color: #d4af37; border-bottom: 2px solid #d4af37; }
+    .burger { display: none; flex-direction: column; cursor: pointer; width: 25px; height: 20px; justify-content: space-between; }
+    .burger span { height: 3px; width: 100%; background: #f8f9fa; border-radius: 3px; transition: all 0.4s ease; }
+
+    @media (max-width: 768px) {
+      nav { width: 94%; padding: 0 1rem; }
+      .nav-links { position: absolute; top: 70px; right: 0; background: #0a1a2f; flex-direction: column; width: 160px; height: 0; overflow: hidden; gap: 1.5rem; transform: scaleY(0); transform-origin: top; box-shadow: 0 4px 10px rgba(0,0,0,0.8); border-left: 2px solid #d4af37; }
+      .nav-links.open { height: auto; margin-top: 0.1rem; padding: 1rem; transform: scaleY(1); border-radius: 5px; }
+      .burger { display: flex; }
+    }
+
+    .burger.toggle span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .burger.toggle span:nth-child(2) { opacity: 0; }
+    .burger.toggle span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
     section {
       max-width: 900px;
@@ -67,9 +83,21 @@
     }
     .credit a { color: #bbb; text-decoration: none; }
     .credit a:hover { text-decoration: underline; }
+
+    #starCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      background: transparent;
+    }
   </style>
 </head>
 <body>
+  <canvas id="starCanvas"></canvas>
   <nav>
     <div class="logo"><img src="assets/WOH.png" alt="Logo"></div>
     <ul class="nav-links">
@@ -81,6 +109,7 @@
       <li><a href="pastors.html">Pastors</a></li>
       <li><a href="contact.html">Contact</a></li>
     </ul>
+    <div class="burger" id="burger"><span></span><span></span><span></span></div>
   </nav>
 
   <section>
@@ -108,5 +137,50 @@
       Source: <a href="https://www.wordofhope.ph/copy-2-of-about-us" target="_blank">Word of Hope – Belief Page</a>
     </div>
   </section>
+  <script>
+    // Navbar toggle
+    const burger = document.getElementById('burger');
+    const navLinks = document.querySelector('.nav-links');
+    burger.addEventListener('click', () => { navLinks.classList.toggle('open'); burger.classList.toggle('toggle'); });
+        // Star canvas animation
+    const canvas = document.getElementById("starCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let stars = [];
+    const numStars = 200;
+
+    function initStars() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = [];
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          alpha: Math.random(),
+          delta: (Math.random() * 0.01 + 0.005) * (Math.random() < 0.5 ? 1 : -1)
+        });
+      }
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.alpha += star.delta;
+        if (star.alpha > 1) { star.alpha = 1; star.delta = -star.delta; }
+        if (star.alpha < 0) { star.alpha = 0; star.delta = -star.delta; }
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+
+    window.addEventListener("resize", initStars);
+    initStars();
+    animateStars();
+  </script>
 </body>
 </html>
