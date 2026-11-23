@@ -5,174 +5,643 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WOH Montalban | Our Beliefs</title>
   <link rel="icon" href="assets/WOHLOGO.png" type="image/x-icon">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; 
-      background: #0a1a2f; 
-      color: #f8f9fa; 
-      padding-top: 80px; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
+    :root {
+      --bg-black: #040404;
+      --glass-bg: rgba(255, 255, 255, 0.035);
+      --glass-bg-hover: rgba(255, 255, 255, 0.06);
+      --glass-subcard: rgba(255, 255, 255, 0.025);
+      --glass-nav: rgba(14, 14, 14, 0.55);
+      --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.09);
+      --gold-primary: #d4af37;
+      --gold-bright: #f5d76e;
+      --gold-champagne: #f3e5ab;
+      --text-primary: #f8f6f0;
+      --text-secondary: #b8b2a6;
+      --container-max: 1280px;
+      --radius-lg: 20px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
-    /* Navbar */
-    nav {
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-black);
+      background-image:
+        radial-gradient(circle at 20% 15%, rgba(212, 175, 55, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 82% 28%, rgba(245, 215, 110, 0.09) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(212, 175, 55, 0.07) 0%, transparent 55%);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 96px;
+      line-height: 1.7;
+    }
+
+    /* Ambient Star & Gold Dust Canvas */
+    #starCanvas {
       position: fixed;
-      top: 10px;
-      width: 96.5%;
-      max-width: 1375px;
-      height: 70px;
-      background: rgba(10, 20, 40, 0.95);
-      backdrop-filter: blur(10px);
-      color: #fff;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Glass Navbar (Borderless) */
+    header {
+      position: fixed;
+      top: 16px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0 1.25rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav {
+      width: 100%;
+      max-width: var(--container-max);
+      height: 68px;
+      background: var(--glass-nav);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 2rem;
-      border-radius: 15px;
-      z-index: 1000;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-      border: 1px solid #d4af37;
+      padding: 0 1.75rem;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65), var(--glass-highlight);
     }
 
-    .logo img { height: 45px; width: auto; display: block; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; transition: transform 0.4s ease; z-index: 3001; }
-    .nav-links li a { text-decoration: none; color: #f8f9fa; font-weight: 500; padding-bottom: 3px; }
-    .nav-links li a:hover { color: #d4af37; border-bottom: 2px solid #d4af37; }
-    .burger { display: none; flex-direction: column; cursor: pointer; width: 25px; height: 20px; justify-content: space-between; }
-    .burger span { height: 3px; width: 100%; background: #f8f9fa; border-radius: 3px; transition: all 0.4s ease; }
-
-    @media (max-width: 768px) {
-      nav { width: 94%; padding: 0 1rem; }
-      .nav-links { position: absolute; top: 70px; right: 0; background: #0a1a2f; flex-direction: column; width: 160px; height: 0; overflow: hidden; gap: 1.5rem; transform: scaleY(0); transform-origin: top; box-shadow: 0 4px 10px rgba(0,0,0,0.8); border-left: 2px solid #d4af37; }
-      .nav-links.open { height: auto; margin-top: 0.1rem; padding: 1rem; transform: scaleY(1); border-radius: 5px; }
-      .burger { display: flex; }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
     }
 
-    .burger.toggle span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-    .burger.toggle span:nth-child(2) { opacity: 0; }
-    .burger.toggle span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    .logo img {
+      height: 42px;
+      width: auto;
+      display: block;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+    }
 
-    section {
-      max-width: 900px;
-      padding: 3rem 2rem;
-      text-align: left;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      list-style: none;
     }
-    section h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.4rem;
-      color: #d4af37;
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .belief {
-      margin-bottom: 1.5rem;
-      line-height: 1.7;
-      font-size: 1.1rem;
-    }
-    .belief strong { color: #d4af37; }
 
-    .credit {
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #bbb;
-      text-align: center;
+    .nav-links li a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.925rem;
+      font-weight: 500;
+      position: relative;
+      padding: 6px 0;
+      transition: var(--transition);
     }
-    .credit a { color: #bbb; text-decoration: none; }
-    .credit a:hover { text-decoration: underline; }
 
-    #starCanvas {
-      position: fixed;
-      top: 0;
+    .nav-links li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 1;
-      pointer-events: none;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold-primary), var(--gold-bright));
+      box-shadow: 0 0 8px var(--gold-primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links li a:hover,
+    .nav-links li a.active {
+      color: var(--gold-bright);
+      text-shadow: 0 0 14px rgba(245, 215, 110, 0.4);
+    }
+
+    .nav-links li a:hover::after,
+    .nav-links li a.active::after {
+      width: 100%;
+    }
+
+    /* Burger Menu */
+    .burger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 24px;
+      height: 18px;
+      cursor: pointer;
       background: transparent;
+      border: none;
+      z-index: 1100;
+    }
+
+    .burger span {
+      height: 2px;
+      width: 100%;
+      background: var(--gold-champagne);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    .burger.toggle span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .burger.toggle span:nth-child(2) { opacity: 0; }
+    .burger.toggle span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    /* Main Content */
+    main {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: var(--container-max);
+      padding: 1.5rem 1.25rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    /* Frosted Glass Panel (Borderless) */
+    .glass-panel {
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.02) 100%
+      );
+      backdrop-filter: blur(22px) saturate(135%);
+      -webkit-backdrop-filter: blur(22px) saturate(135%);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75), var(--glass-highlight);
+      padding: 2.75rem 2.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .section-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.85rem;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 2.2px;
+      color: var(--gold-bright);
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(212, 175, 55, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    h1 {
+      font-family: 'Merriweather', Georgia, serif;
+      color: var(--gold-champagne);
+      font-weight: 700;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65);
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      line-height: 1.3;
+    }
+
+    .intro-lead {
+      font-size: clamp(1rem, 1.3vw, 1.12rem);
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Beliefs Grid */
+    .beliefs-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.15rem;
+      list-style: none;
+    }
+
+    .belief-card {
+      background: var(--glass-subcard);
+      border-radius: var(--radius-md);
+      padding: 1.4rem 1.5rem;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45), var(--glass-highlight);
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: var(--transition);
+    }
+
+    .belief-card:hover {
+      transform: translateY(-3px);
+      background: var(--glass-bg-hover);
+      box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.65),
+        0 0 20px rgba(212, 175, 55, 0.11),
+        var(--glass-highlight);
+    }
+
+    .belief-number {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-bright);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .belief-content {
+      font-size: 0.96rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .belief-prefix {
+      color: var(--gold-bright);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-right: 0.25rem;
+    }
+
+    .cardinal-pill {
+      display: inline-block;
+      margin-top: 0.55rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--gold-champagne);
+      background: rgba(212, 175, 55, 0.12);
+      padding: 3px 10px;
+      border-radius: 999px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* Source Credit */
+    .credit {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      opacity: 0.85;
+      padding-top: 0.5rem;
+    }
+
+    .credit a {
+      color: var(--gold-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .credit a:hover {
+      color: var(--gold-bright);
+      text-shadow: 0 0 10px rgba(245, 215, 110, 0.45);
+    }
+
+    /* Glass Footer (Borderless) */
+    footer {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      padding: 2rem 1.25rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-top: auto;
+    }
+
+    footer span {
+      color: var(--gold-bright);
+      font-weight: 600;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 920px) {
+      .beliefs-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      body {
+        padding-top: 84px;
+      }
+
+      header {
+        top: 10px;
+        padding: 0 0.85rem;
+      }
+
+      nav {
+        height: 62px;
+        padding: 0 1.25rem;
+      }
+
+      .burger {
+        display: flex;
+      }
+
+      .nav-links {
+        position: absolute;
+        top: 72px;
+        right: 0.85rem;
+        left: 0.85rem;
+        background: rgba(16, 16, 16, 0.88);
+        backdrop-filter: blur(24px) saturate(140%);
+        -webkit-backdrop-filter: blur(24px) saturate(140%);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 1.5rem;
+        gap: 0;
+        border-radius: var(--radius-md);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.9), var(--glass-highlight);
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: all 0.35s ease;
+      }
+
+      .nav-links.open {
+        max-height: 420px;
+        padding: 1rem 1.5rem;
+        opacity: 1;
+      }
+
+      .nav-links li {
+        width: 100%;
+      }
+
+      .nav-links li a {
+        display: block;
+        padding: 0.85rem 0;
+        width: 100%;
+      }
+
+      .glass-panel {
+        padding: 1.85rem 1.25rem;
+      }
     }
   </style>
 </head>
 <body>
   <canvas id="starCanvas"></canvas>
-  <nav>
-    <div class="logo"><img src="assets/WOH.png" alt="Logo"></div>
-    <ul class="nav-links">
-      <li><a href="landing-page.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="mission-vision.html">Mission & Vision</a></li>
-      <li><a href="beliefs.html">Beliefs</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="pastors.html">Pastors</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-    <div class="burger" id="burger"><span></span><span></span><span></span></div>
-  </nav>
 
-  <section>
-    <h2>Our Beliefs</h2>
-    <h3 style="margin-bottom: 1rem;">These are nonnegotiable tenets of faith that all Assemblies of God churches adhere to. This list is derived from the official Statement of Fundamental Truths.</h3>
+  <!-- Navbar -->
+  <header>
+    <nav>
+      <a href="landing-page.html" class="logo">
+        <img src="assets/WOH.png" alt="Logo">
+      </a>
 
-    <p class="belief"><strong>WE BELIEVE...</strong> The Scriptures are Inspired by God and declare His design and plan for mankind.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> There is only One True God – revealed in three persons: Father, Son, and Holy Spirit (commonly known as the Trinity).</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> In the Deity of the Lord Jesus Christ. As God's Son, Jesus was both human and divine.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> though originally good, Man Willingly Fell to Sin – ushering evil and death, both physical and spiritual, into the world.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> Every Person Can Have Restored Fellowship with God Through 'Salvation' (accepting Christ's offer of forgiveness for sin). [1 of 4 cardinal doctrines of the A/G]</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> and practice two ordinances—(1) Water Baptism by Immersion after repenting of one's sins and receiving Christ's gift of salvation, and (2) Holy Communion (the Lord's Supper) as a symbolic remembrance of Christ's suffering and death for our salvation.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> the Baptism in the Holy Spirit is a Special Experience Following Salvation that empowers believers for witnessing and effective service, just as it did in New Testament times. [1 of 4 cardinal doctrines of the A/G]</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> The Initial Physical Evidence of the Baptism in the Holy Spirit is ‘Speaking in Tongues,' as experienced on the Day of Pentecost and referenced throughout Acts and the Epistles.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> Sanctification Initially Occurs at Salvation and is not only a declaration that a believer is holy, but also a progressive lifelong process of separating from evil as believers continually draw closer to God and become more Christlike.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> The Church has a Mission to seek and save all who are lost in sin. We believe 'the Church' is the Body of Christ and consists of the people who, throughout time, have accepted God's offer of redemption (regardless of religious denomination) through the sacrificial death of His Son Jesus Christ.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> A Divinely Called and Scripturally Ordained Leadership Ministry Serves the Church. The Bible teaches that each of us under leadership must commit ourselves to reach others for Christ, to worship Him with other believers, and to build up or edify the body of believers – the Church.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> Divine Healing of the Sick is a Privilege for Christians Today and is provided for in Christ's atonement (His sacrificial death on the cross for our sins). [1 of 4 cardinal doctrines of the A/G]</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> in The Blessed Hope—When Jesus Raptures His Church Prior to His Return to Earth (the second coming). At this future moment in time all believers who have died will rise from their graves and will meet the Lord in the air, and Christians who are alive will be caught up with them, to be with the Lord forever. [1 of 4 cardinal doctrines of the A/G]</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> in The Millennial Reign of Christ when Jesus returns with His saints at His second coming and begins His benevolent rule over earth for 1,000 years. This millennial reign will bring the salvation of national Israel and the establishment of universal peace.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> A Final Judgment Will Take Place for those who have rejected Christ. They will be judged for their sin and consigned to eternal punishment in a punishing lake of fire.</p>
-    <p class="belief"><strong>WE BELIEVE...</strong> and look forward to the perfect New Heavens and a New Earth that Christ is preparing for all people, of all time, who have accepted Him. We will live and dwell with Him there forever following His millennial reign on Earth. "And so shall we forever be with the Lord."</p>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="landing-page.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="mission-vision.html">Mission &amp; Vision</a></li>
+        <li><a href="beliefs.html" class="active">Beliefs</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="pastors.html">Pastors</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
 
-    <div class="credit">
-      Source: <a href="https://www.wordofhope.ph/copy-2-of-about-us" target="_blank">Word of Hope – Belief Page</a>
-    </div>
-  </section>
+      <button class="burger" id="burger" aria-label="Toggle navigation menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <section class="glass-panel" aria-labelledby="beliefs-heading">
+      <div class="section-top">
+        <span class="eyebrow">Statement of Fundamental Truths</span>
+        <h1 id="beliefs-heading">Our Beliefs</h1>
+        <p class="intro-lead">
+          These are nonnegotiable tenets of faith that all Assemblies of God churches adhere to, derived from the official Statement of Fundamental Truths.
+        </p>
+      </div>
+
+      <ol class="beliefs-list">
+        <li class="belief-card">
+          <span class="belief-number">01</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> The Scriptures are Inspired by God and declare His design and plan for mankind.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">02</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> There is only One True God – revealed in three persons: Father, Son, and Holy Spirit (commonly known as the Trinity).
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">03</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> In the Deity of the Lord Jesus Christ. As God's Son, Jesus was both human and divine.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">04</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> though originally good, Man Willingly Fell to Sin – ushering evil and death, both physical and spiritual, into the world.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">05</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> Every Person Can Have Restored Fellowship with God Through 'Salvation' (accepting Christ's offer of forgiveness for sin).<br>
+            <span class="cardinal-pill">1 of 4 Cardinal Doctrines (A/G)</span>
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">06</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> and practice two ordinances—(1) Water Baptism by Immersion after repenting of one's sins and receiving Christ's gift of salvation, and (2) Holy Communion (the Lord's Supper) as a symbolic remembrance of Christ's suffering and death for our salvation.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">07</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> the Baptism in the Holy Spirit is a Special Experience Following Salvation that empowers believers for witnessing and effective service, just as it did in New Testament times.<br>
+            <span class="cardinal-pill">1 of 4 Cardinal Doctrines (A/G)</span>
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">08</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> The Initial Physical Evidence of the Baptism in the Holy Spirit is ‘Speaking in Tongues,’ as experienced on the Day of Pentecost and referenced throughout Acts and the Epistles.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">09</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> Sanctification Initially Occurs at Salvation and is not only a declaration that a believer is holy, but also a progressive lifelong process of separating from evil as believers continually draw closer to God and become more Christlike.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">10</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> The Church has a Mission to seek and save all who are lost in sin. We believe 'the Church' is the Body of Christ and consists of the people who, throughout time, have accepted God's offer of redemption (regardless of religious denomination) through the sacrificial death of His Son Jesus Christ.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">11</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> A Divinely Called and Scripturally Ordained Leadership Ministry Serves the Church. The Bible teaches that each of us under leadership must commit ourselves to reach others for Christ, to worship Him with other believers, and to build up or edify the body of believers – the Church.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">12</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> Divine Healing of the Sick is a Privilege for Christians Today and is provided for in Christ's atonement (His sacrificial death on the cross for our sins).<br>
+            <span class="cardinal-pill">1 of 4 Cardinal Doctrines (A/G)</span>
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">13</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> in The Blessed Hope—When Jesus Raptures His Church Prior to His Return to Earth (the second coming). At this future moment in time all believers who have died will rise from their graves and will meet the Lord in the air, and Christians who are alive will be caught up with them, to be with the Lord forever.<br>
+            <span class="cardinal-pill">1 of 4 Cardinal Doctrines (A/G)</span>
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">14</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> in The Millennial Reign of Christ when Jesus returns with His saints at His second coming and begins His benevolent rule over earth for 1,000 years. This millennial reign will bring the salvation of national Israel and the establishment of universal peace.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">15</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> A Final Judgment Will Take Place for those who have rejected Christ. They will be judged for their sin and consigned to eternal punishment in a punishing lake of fire.
+          </div>
+        </li>
+
+        <li class="belief-card">
+          <span class="belief-number">16</span>
+          <div class="belief-content">
+            <span class="belief-prefix">WE BELIEVE...</span> and look forward to the perfect New Heavens and a New Earth that Christ is preparing for all people, of all time, who have accepted Him. We will live and dwell with Him there forever following His millennial reign on Earth. "And so shall we forever be with the Lord."
+          </div>
+        </li>
+      </ol>
+
+      <div class="credit">
+        Source: <a href="https://www.wordofhope.ph/copy-2-of-about-us" target="_blank" rel="noopener noreferrer">Word of Hope – Belief Page</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Glass Footer -->
+  <footer>
+    <p>&copy; 2026 <span>WOH Montalban</span> — A Christian Family Church. All rights reserved.</p>
+  </footer>
+
   <script>
-    // Navbar toggle
+    // Mobile Menu Toggle
     const burger = document.getElementById('burger');
-    const navLinks = document.querySelector('.nav-links');
-    burger.addEventListener('click', () => { navLinks.classList.toggle('open'); burger.classList.toggle('toggle'); });
-        // Star canvas animation
+    const navLinks = document.getElementById('navLinks');
+
+    burger.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      burger.classList.toggle('toggle');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!burger.contains(e.target) && !navLinks.contains(e.target)) {
+        navLinks.classList.remove('open');
+        burger.classList.remove('toggle');
+      }
+    });
+
+    // Shining Gold & Starlight Background
     const canvas = document.getElementById("starCanvas");
     const ctx = canvas.getContext("2d");
-
     let stars = [];
-    const numStars = 200;
+    const numStars = 150;
 
     function initStars() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      stars = [];
-      for (let i = 0; i < numStars; i++) {
-        stars.push({
+      stars = Array.from({ length: numStars }, () => {
+        const isGold = Math.random() < 0.5;
+        return {
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          r: Math.random() * 1.5 + 0.5,
-          alpha: Math.random(),
-          delta: (Math.random() * 0.01 + 0.005) * (Math.random() < 0.5 ? 1 : -1)
-        });
-      }
+          r: Math.random() * 1.6 + 0.4,
+          alpha: Math.random() * 0.85,
+          delta: (Math.random() * 0.01 + 0.004) * (Math.random() < 0.5 ? 1 : -1),
+          color: isGold ? "245, 215, 110" : "255, 250, 240",
+          glow: isGold
+        };
+      });
     }
 
     function animateStars() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       stars.forEach(star => {
         star.alpha += star.delta;
-        if (star.alpha > 1) { star.alpha = 1; star.delta = -star.delta; }
-        if (star.alpha < 0) { star.alpha = 0; star.delta = -star.delta; }
+        if (star.alpha > 0.9 || star.alpha < 0.08) star.delta = -star.delta;
+
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+        ctx.fillStyle = `rgba(${star.color}, ${star.alpha})`;
+
+        if (star.glow && star.alpha > 0.45) {
+          ctx.shadowBlur = 9;
+          ctx.shadowColor = "rgba(212, 175, 55, 0.85)";
+        } else {
+          ctx.shadowBlur = 0;
+        }
+
         ctx.fill();
       });
       requestAnimationFrame(animateStars);
@@ -184,4 +653,3 @@
   </script>
 </body>
 </html>
-
