@@ -44,7 +44,6 @@
       overflow-x: hidden;
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-black);
-      /* Ambient golden light pools so frosted glass has depth to refract */
       background-image: 
         radial-gradient(circle at 20% 15%, rgba(212, 175, 55, 0.12) 0%, transparent 45%),
         radial-gradient(circle at 82% 28%, rgba(245, 215, 110, 0.09) 0%, transparent 40%),
@@ -333,6 +332,47 @@
       letter-spacing: 0.8px;
       color: var(--gold-primary);
       text-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
+      margin-bottom: 1.35rem;
+    }
+
+    /* Voice Reader Button */
+    .voice-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.15rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--gold-champagne);
+      background: rgba(212, 175, 55, 0.14);
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+
+    .voice-btn svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    .voice-btn:hover {
+      background: rgba(212, 175, 55, 0.28);
+      color: #ffffff;
+      box-shadow: 0 0 18px rgba(212, 175, 55, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .voice-btn.speaking {
+      background: rgba(212, 175, 55, 0.88);
+      color: #050505;
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 20px rgba(245, 215, 110, 0.5);
     }
 
     /* Section Header */
@@ -568,6 +608,10 @@
         <span class="verse-badge">Verse of the Day</span>
         <blockquote class="verse" id="verse">Loading daily scripture...</blockquote>
         <cite class="reference" id="reference"></cite>
+        <button class="voice-btn" id="voiceBtn" type="button" aria-label="Listen to daily verse">
+          <span id="voiceIcon" aria-hidden="true"></span>
+          <span id="voiceLabel">Listen</span>
+        </button>
       </aside>
     </section>
 
@@ -677,19 +721,219 @@
       speed: 800
     });
 
-    // Load Daily Verse with Fallback
+// Smooth Speech Synthesis + Design-Matched SVG Icons
+    const voiceBtn = document.getElementById("voiceBtn");
+    const voiceIcon = document.getElementById("voiceIcon");
+    const voiceLabel = document.getElementById("voiceLabel");
+
+    const SPEAKER_SVG = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+      </svg>
+    `;
+
+    const STOP_SVG = `
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+      </svg>
+    `;
+
+    let currentVerseText = "";
+    let currentVerseRef = "";
+    let hasAutoPlayed = false;
+    let isReadingSession = false;
+
+    function updateVoiceUI(isSpeaking) {
+      if (isSpeaking) {
+        voiceBtn.classList.add("speaking");
+        voiceIcon.innerHTML = STOP_SVG;
+        voiceLabel.textContent = "Stop";
+      } else {
+        voiceBtn.classList.remove("speaking");
+        voiceIcon.innerHTML = SPEAKER_SVG;
+        voiceLabel.textContent = "Listen";
+      }
+    }
+
+    updateVoiceUI(false);
+
+    function pickSmoothVoice() {
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices.length) return null;
+
+      const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+      const pool = enVoices.length ? enVoices : voices;
+
+      const preferredKeywords = [
+        "natural",
+        "neural",
+        "online",
+        "google",
+        "aria",
+        "jenny",
+        "guy",
+        "sonia",
+        "ryan",
+        "samantha",
+        "daniel"
+      ];
+
+      for (const key of preferredKeywords) {
+        const match = pool.find(v => v.name.toLowerCase().includes(key));
+        if (match) return match;
+      }
+
+      return pool.find(v => !v.name.toLowerCase().includes("compact")) || pool[0];
+    }
+
+    function buildSmoothSegments(verseText, referenceText) {
+      const cleaned = verseText
+        .replace(/^["“']+|["”']+$/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      // Split into natural phrases at sentence ends or pauses so pacing stays smooth
+      const rawChunks = cleaned
+        .match(/[^.!?…;]+[.!?…;]?/g) || [cleaned];
+
+      const segments = [];
+      rawChunks.forEach(chunk => {
+        const trimmed = chunk.trim();
+        if (!trimmed) return;
+        // If a single clause is long, break gently at commas/colons
+        if (trimmed.length > 110) {
+          trimmed.split(/,\s*/).forEach((part, idx, arr) => {
+            const p = part.trim();
+            if (p) segments.push(idx < arr.length - 1 ? `${p},` : p);
+          });
+        } else {
+          segments.push(trimmed);
+        }
+      });
+
+      if (referenceText) {
+        segments.push(referenceText.trim());
+      }
+
+      return segments;
+    }
+
+    function speakVerse() {
+      if (!("speechSynthesis" in window) || !currentVerseText) return;
+
+      window.speechSynthesis.cancel();
+      const segments = buildSmoothSegments(currentVerseText, currentVerseRef);
+      if (!segments.length) return;
+
+      const selectedVoice = pickSmoothVoice();
+      isReadingSession = true;
+      let index = 0;
+
+      function speakNext() {
+        if (!isReadingSession || index >= segments.length) {
+          isReadingSession = false;
+          updateVoiceUI(false);
+          return;
+        }
+
+        const phrase = segments[index++];
+        const utterance = new SpeechSynthesisUtterance(phrase);
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          utterance.lang = selectedVoice.lang;
+        } else {
+          utterance.lang = "en-US";
+        }
+
+        // Slightly slower, warm cadence for scripture
+        utterance.rate = 0.91;
+        utterance.pitch = 0.98;
+        utterance.volume = 1;
+
+        utterance.onstart = () => {
+          hasAutoPlayed = true;
+          updateVoiceUI(true);
+        };
+
+        utterance.onend = () => {
+          if (!isReadingSession) return;
+          if (index < segments.length) {
+            speakNext();
+          } else {
+            isReadingSession = false;
+            updateVoiceUI(false);
+          }
+        };
+
+        utterance.onerror = () => {
+          isReadingSession = false;
+          updateVoiceUI(false);
+        };
+
+        window.speechSynthesis.speak(utterance);
+      }
+
+      speakNext();
+    }
+
+    function stopVerse() {
+      isReadingSession = false;
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      updateVoiceUI(false);
+    }
+
+    voiceBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (isReadingSession || window.speechSynthesis.speaking) {
+        stopVerse();
+      } else {
+        speakVerse();
+      }
+    });
+
+    function handleFirstInteraction() {
+      if (!hasAutoPlayed && currentVerseText) {
+        speakVerse();
+      }
+      document.removeEventListener("click", handleFirstInteraction);
+      document.removeEventListener("touchstart", handleFirstInteraction);
+      document.removeEventListener("keydown", handleFirstInteraction);
+    }
+
+    document.addEventListener("click", handleFirstInteraction);
+    document.addEventListener("touchstart", handleFirstInteraction);
+    document.addEventListener("keydown", handleFirstInteraction);
+
+    window.addEventListener("beforeunload", stopVerse);
+
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+
     async function loadVerse() {
       const verseEl = document.getElementById("verse");
       const refEl = document.getElementById("reference");
       try {
         const response = await fetch("https://beta.ourmanna.com/api/v1/get/?format=json");
         const data = await response.json();
-        verseEl.innerText = `"${data.verse.details.text}"`;
-        refEl.innerText = data.verse.details.reference;
+        currentVerseText = data.verse.details.text;
+        currentVerseRef = data.verse.details.reference;
       } catch {
-        verseEl.innerText = `"For where two or three gather in my name, there am I with them."`;
-        refEl.innerText = "Matthew 18:20";
+        currentVerseText = "For where two or three gather in my name, there am I with them.";
+        currentVerseRef = "Matthew 18:20";
       }
+
+      verseEl.innerText = `"${currentVerseText}"`;
+      refEl.innerText = currentVerseRef;
+
+      speakVerse();
     }
     loadVerse();
 
