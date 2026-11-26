@@ -721,7 +721,7 @@
       speed: 800
     });
 
-// Smooth Speech Synthesis + Design-Matched SVG Icons
+    // Smooth Speech Synthesis + Design-Matched SVG Icons (Male Voice Priority)
     const voiceBtn = document.getElementById("voiceBtn");
     const voiceIcon = document.getElementById("voiceIcon");
     const voiceLabel = document.getElementById("voiceLabel");
@@ -763,43 +763,55 @@
       const voices = window.speechSynthesis.getVoices();
       if (!voices.length) return null;
 
-      const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
-      const pool = enVoices.length ? enVoices : voices;
-
-      const preferredKeywords = [
-        "natural",
-        "neural",
-        "online",
-        "google",
-        "aria",
-        "jenny",
-        "guy",
-        "sonia",
-        "ryan",
-        "samantha",
-        "daniel"
+      const femalePatterns = [
+        /\bfemale\b/i,
+        /\bwoman\b/i,
+        /\b(aria|jenny|sonia|samantha|libby|emma|zira|hazel|victoria|karen|moira|fiona|tessa|veena|serena|allison|ava|zoe|claire|chloe|hannah|olivia|sophia|natasha|michelle|rachel|elena|catherine|elizabeth)\b/i
       ];
 
-      for (const key of preferredKeywords) {
-        const match = pool.find(v => v.name.toLowerCase().includes(key));
+      const isLikelyFemale = (voice) =>
+        femalePatterns.some((pattern) => pattern.test(voice.name));
+
+      const enVoices = voices.filter(
+        (v) => v.lang && v.lang.toLowerCase().startsWith("en")
+      );
+      const basePool = enVoices.length ? enVoices : voices;
+
+      // Exclude female voices when non-female options exist
+      const nonFemalePool = basePool.filter((v) => !isLikelyFemale(v));
+      const pool = nonFemalePool.length ? nonFemalePool : basePool;
+
+      const preferredMalePatterns = [
+        /\bguy\b.*(natural|online|neural)/i,
+        /\bryan\b.*(natural|online|neural)/i,
+        /\bdaniel\b.*(natural|online|neural)/i,
+        /\b(guy|ryan|daniel|arthur|thomas|george|james|david|mark|alex|fred|christopher|eric|roger)\b/i,
+        /\bmale\b/i,
+        /natural/i,
+        /neural/i,
+        /online/i
+      ];
+
+      for (const pattern of preferredMalePatterns) {
+        const match = pool.find((v) => pattern.test(v.name));
         if (match) return match;
       }
 
-      return pool.find(v => !v.name.toLowerCase().includes("compact")) || pool[0];
+      return pool.find((v) => !/compact/i.test(v.name)) || pool[0];
     }
 
     function buildSmoothSegments(verseText, referenceText) {
       const cleaned = verseText
-        .replace(/^["“']+|["”']+$/g, "")
+        .replace(/^["“'‘]+|["”'’]+$/g, "")
         .replace(/\s+/g, " ")
         .trim();
 
       // Split into natural phrases at sentence ends or pauses so pacing stays smooth
-      const rawChunks = cleaned
-        .match(/[^.!?…;]+[.!?…;]?/g) || [cleaned];
+      const rawChunks =
+        cleaned.match(/[^.!?…;]+[.!?…;]?/g) || [cleaned];
 
       const segments = [];
-      rawChunks.forEach(chunk => {
+      rawChunks.forEach((chunk) => {
         const trimmed = chunk.trim();
         if (!trimmed) return;
         // If a single clause is long, break gently at commas/colons
@@ -848,9 +860,9 @@
           utterance.lang = "en-US";
         }
 
-        // Slightly slower, warm cadence for scripture
+        // Slightly slower, warm, lower-pitched cadence for scripture
         utterance.rate = 0.91;
-        utterance.pitch = 0.98;
+        utterance.pitch = 0.92;
         utterance.volume = 1;
 
         utterance.onstart = () => {
