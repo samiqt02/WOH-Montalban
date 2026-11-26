@@ -721,7 +721,7 @@
       speed: 800
     });
 
-    // Smooth Speech Synthesis + Design-Matched SVG Icons (Male Voice Priority)
+    // Bible-App Style Audio Reader (External Audio URL + Single-Voice Speech Fallback)
     const voiceBtn = document.getElementById("voiceBtn");
     const voiceIcon = document.getElementById("voiceIcon");
     const voiceLabel = document.getElementById("voiceLabel");
@@ -740,8 +740,15 @@
       </svg>
     `;
 
+    // Optional: Point this to a single hosted MP3 or TTS audio endpoint if you have one
+    const CUSTOM_AUDIO_URL = "";
+
+    const audioPlayer = new Audio();
+    audioPlayer.preload = "none";
+
     let currentVerseText = "";
     let currentVerseRef = "";
+    let lockedVoice = null;
     let hasAutoPlayed = false;
     let isReadingSession = false;
 
@@ -759,9 +766,12 @@
 
     updateVoiceUI(false);
 
-    function pickSmoothVoice() {
+    function getSingleNarratorVoice() {
+      if (lockedVoice) return lockedVoice;
+      if (!("speechSynthesis" in window)) return null;
+
       const voices = window.speechSynthesis.getVoices();
-      if (!voices.length) return null;
+      if (!voices || !voices.length) return null;
 
       const femalePatterns = [
         /\bfemale\b/i,
@@ -769,139 +779,132 @@
         /\b(aria|jenny|sonia|samantha|libby|emma|zira|hazel|victoria|karen|moira|fiona|tessa|veena|serena|allison|ava|zoe|claire|chloe|hannah|olivia|sophia|natasha|michelle|rachel|elena|catherine|elizabeth)\b/i
       ];
 
-      const isLikelyFemale = (voice) =>
+      const isFemale = (voice) =>
         femalePatterns.some((pattern) => pattern.test(voice.name));
 
       const enVoices = voices.filter(
         (v) => v.lang && v.lang.toLowerCase().startsWith("en")
       );
       const basePool = enVoices.length ? enVoices : voices;
-
-      // Exclude female voices when non-female options exist
-      const nonFemalePool = basePool.filter((v) => !isLikelyFemale(v));
+      const nonFemalePool = basePool.filter((v) => !isFemale(v));
       const pool = nonFemalePool.length ? nonFemalePool : basePool;
 
-      const preferredMalePatterns = [
-        /\bguy\b.*(natural|online|neural)/i,
-        /\bryan\b.*(natural|online|neural)/i,
-        /\bdaniel\b.*(natural|online|neural)/i,
-        /\b(guy|ryan|daniel|arthur|thomas|george|james|david|mark|alex|fred|christopher|eric|roger)\b/i,
+      const preferredNarrators = [
+        /\b(guy|ryan|daniel|arthur|thomas|george|david|james|mark|christopher|eric|roger)\b/i,
         /\bmale\b/i,
         /natural/i,
-        /neural/i,
-        /online/i
+        /neural/i
       ];
 
-      for (const pattern of preferredMalePatterns) {
+      for (const pattern of preferredNarrators) {
         const match = pool.find((v) => pattern.test(v.name));
-        if (match) return match;
+        if (match) {
+          lockedVoice = match;
+          return lockedVoice;
+        }
       }
 
-      return pool.find((v) => !/compact/i.test(v.name)) || pool[0];
+      lockedVoice = pool.find((v) => !/compact/i.test(v.name)) || pool[0];
+      return lockedVoice;
     }
 
-    function buildSmoothSegments(verseText, referenceText) {
+    function formatScripture(verseText, referenceText) {
       const cleaned = verseText
         .replace(/^["“'‘]+|["”'’]+$/g, "")
         .replace(/\s+/g, " ")
         .trim();
 
-      // Split into natural phrases at sentence ends or pauses so pacing stays smooth
-      const rawChunks =
-        cleaned.match(/[^.!?…;]+[.!?…;]?/g) || [cleaned];
-
-      const segments = [];
-      rawChunks.forEach((chunk) => {
-        const trimmed = chunk.trim();
-        if (!trimmed) return;
-        // If a single clause is long, break gently at commas/colons
-        if (trimmed.length > 110) {
-          trimmed.split(/,\s*/).forEach((part, idx, arr) => {
-            const p = part.trim();
-            if (p) segments.push(idx < arr.length - 1 ? `${p},` : p);
-          });
-        } else {
-          segments.push(trimmed);
-        }
-      });
-
-      if (referenceText) {
-        segments.push(referenceText.trim());
-      }
-
-      return segments;
+      return referenceText
+        ? `${cleaned}. ${referenceText.trim()}.`
+        : `${cleaned}.`;
     }
 
-    function speakVerse() {
+    function speakWithBrowserVoice() {
       if (!("speechSynthesis" in window) || !currentVerseText) return;
 
       window.speechSynthesis.cancel();
-      const segments = buildSmoothSegments(currentVerseText, currentVerseRef);
-      if (!segments.length) return;
+      const utterance = new SpeechSynthesisUtterance(
+        formatScripture(currentVerseText, currentVerseRef)
+      );
 
-      const selectedVoice = pickSmoothVoice();
-      isReadingSession = true;
-      let index = 0;
-
-      function speakNext() {
-        if (!isReadingSession || index >= segments.length) {
-          isReadingSession = false;
-          updateVoiceUI(false);
-          return;
-        }
-
-        const phrase = segments[index++];
-        const utterance = new SpeechSynthesisUtterance(phrase);
-
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-          utterance.lang = selectedVoice.lang;
-        } else {
-          utterance.lang = "en-US";
-        }
-
-        // Slightly slower, warm, lower-pitched cadence for scripture
-        utterance.rate = 0.91;
-        utterance.pitch = 0.92;
-        utterance.volume = 1;
-
-        utterance.onstart = () => {
-          hasAutoPlayed = true;
-          updateVoiceUI(true);
-        };
-
-        utterance.onend = () => {
-          if (!isReadingSession) return;
-          if (index < segments.length) {
-            speakNext();
-          } else {
-            isReadingSession = false;
-            updateVoiceUI(false);
-          }
-        };
-
-        utterance.onerror = () => {
-          isReadingSession = false;
-          updateVoiceUI(false);
-        };
-
-        window.speechSynthesis.speak(utterance);
+      const voice = getSingleNarratorVoice();
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+      } else {
+        utterance.lang = "en-US";
       }
 
-      speakNext();
+      utterance.rate = 0.7;
+      utterance.pitch = 0.4;
+      utterance.volume = 1;
+
+      isReadingSession = true;
+
+      utterance.onstart = () => {
+        hasAutoPlayed = true;
+        updateVoiceUI(true);
+      };
+
+      utterance.onend = () => {
+        isReadingSession = false;
+        updateVoiceUI(false);
+      };
+
+      utterance.onerror = () => {
+        isReadingSession = false;
+        updateVoiceUI(false);
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    async function speakVerse() {
+      if (!currentVerseText) return;
+      stopVerse();
+
+      if (CUSTOM_AUDIO_URL) {
+        try {
+          const endpoint = new URL(CUSTOM_AUDIO_URL);
+          endpoint.searchParams.set("text", formatScripture(currentVerseText, currentVerseRef));
+          audioPlayer.src = endpoint.toString();
+          isReadingSession = true;
+          await audioPlayer.play();
+          hasAutoPlayed = true;
+          updateVoiceUI(true);
+          return;
+        } catch {
+          // Fall back to single browser voice if custom audio isn't available
+        }
+      }
+
+      speakWithBrowserVoice();
     }
 
     function stopVerse() {
       isReadingSession = false;
+      audioPlayer.pause();
+      audioPlayer.currentTime = 0;
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
       updateVoiceUI(false);
     }
 
+    audioPlayer.addEventListener("ended", () => {
+      isReadingSession = false;
+      updateVoiceUI(false);
+    });
+
+    audioPlayer.addEventListener("error", () => {
+      if (isReadingSession) {
+        speakWithBrowserVoice();
+      }
+    });
+
     voiceBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (isReadingSession || window.speechSynthesis.speaking) {
+      if (isReadingSession || !audioPlayer.paused || (window.speechSynthesis && window.speechSynthesis.speaking)) {
         stopVerse();
       } else {
         speakVerse();
@@ -925,7 +928,9 @@
 
     if ("speechSynthesis" in window) {
       window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
+        if (!lockedVoice) {
+          getSingleNarratorVoice();
+        }
       };
     }
 
